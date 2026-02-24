@@ -65,6 +65,9 @@ public class Booking {
         this.seatsBooked = seatsBooked;
     }
 
+    public void setBookingId(Long bookingId) {
+        this.bookingId = bookingId;
+    }
     public LocalDateTime getBookingTime() {
         return bookingTime;
     }

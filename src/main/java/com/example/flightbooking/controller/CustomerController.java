@@ -4,6 +4,8 @@ import com.example.flightbooking.dto.CustomerDTO;
 import com.example.flightbooking.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -19,8 +21,8 @@ public class CustomerController {
         return customerService.registerCustomer(customerDTO);
     }
 
-    @GetMapping("/{id}")
-    public CustomerDTO getCustomerById(@PathVariable Long id) {
-        return customerService.getCustomerById(id);
+    @GetMapping
+    public List<CustomerDTO> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 }

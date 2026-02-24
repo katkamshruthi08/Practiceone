@@ -1,6 +1,8 @@
 package com.example.flightbooking.service;
 
+import com.example.flightbooking.dto.FlightDTO;
 import com.example.flightbooking.entity.Flight;
+import com.example.flightbooking.mapper.FlightMapper;
 import com.example.flightbooking.repository.FlightRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,16 +12,30 @@ import java.util.List;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final FlightMapper flightMapper;
 
-    public FlightService(FlightRepository flightRepository) {
+    public FlightService(FlightRepository flightRepository,
+                         FlightMapper flightMapper) {
         this.flightRepository = flightRepository;
+        this.flightMapper = flightMapper;
     }
 
-    public Flight saveFlight(Flight flight) {
-        return flightRepository.save(flight);
+    // 🔥 Create Flight
+    public FlightDTO createFlight(FlightDTO flightDTO) {
+
+        Flight flight = flightMapper.toEntity(flightDTO);
+
+        Flight savedFlight = flightRepository.save(flight);
+
+        return flightMapper.toDTO(savedFlight);
     }
 
-    public List<Flight> getAllFlights() {
-        return flightRepository.findAll();
+    // 🔥 Get All Flights
+    public List<FlightDTO> getAllFlights() {
+
+        return flightRepository.findAll()
+                .stream()
+                .map(flightMapper::toDTO)
+                .toList();
     }
 }

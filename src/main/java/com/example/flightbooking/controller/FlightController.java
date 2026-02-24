@@ -1,6 +1,6 @@
 package com.example.flightbooking.controller;
 
-import com.example.flightbooking.entity.Flight;
+import com.example.flightbooking.dto.FlightDTO;
 import com.example.flightbooking.service.FlightService;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,21 +8,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/flights")
-public class TestController {
+public class FlightController {
 
     private final FlightService flightService;
 
-    public TestController(FlightService flightService) {
+    public FlightController(FlightService flightService) {
         this.flightService = flightService;
     }
 
     @PostMapping
-    public Flight addFlight(@RequestBody Flight flight) {
-        return flightService.saveFlight(flight);
+    public FlightDTO createFlight(@RequestBody FlightDTO flightDTO) {
+        return flightService.createFlight(flightDTO);
     }
 
     @GetMapping
-    public List<Flight> getAllFlights() {
+    public List<FlightDTO> getAllFlights() {
         return flightService.getAllFlights();
     }
 }

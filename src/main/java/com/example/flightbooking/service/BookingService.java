@@ -3,6 +3,7 @@ package com.example.flightbooking.service;
 import com.example.flightbooking.dto.BookingDTO;
 import com.example.flightbooking.entity.Booking;
 import com.example.flightbooking.entity.Customer;
+import com.example.flightbooking.mapper.BookingMapper;
 import com.example.flightbooking.entity.Flight;
 import com.example.flightbooking.repository.BookingRepository;
 import com.example.flightbooking.repository.CustomerRepository;
@@ -16,20 +17,23 @@ import java.util.Optional;
 public class BookingService {
 
     private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
     private final CustomerRepository customerRepository;
     private final FlightRepository flightRepository;
 
     public BookingService(BookingRepository bookingRepository,
                           CustomerRepository customerRepository,
-                          FlightRepository flightRepository) {
+                          FlightRepository flightRepository,
+                          BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.customerRepository = customerRepository;
         this.flightRepository = flightRepository;
+        this.bookingMapper = bookingMapper;
+
     }
 
     public BookingDTO createBooking(BookingDTO bookingDTO) {
 
-        // 1️⃣ Check customer exists
         Optional<Customer> customerOptional =
                 customerRepository.findById(bookingDTO.getCustomerId());
 
@@ -37,7 +41,6 @@ public class BookingService {
             throw new RuntimeException("Customer not found");
         }
 
-        // 2️⃣ Check flight exists
         Optional<Flight> flightOptional =
                 flightRepository.findById(bookingDTO.getFlightId());
 
@@ -45,37 +48,36 @@ public class BookingService {
             throw new RuntimeException("Flight not found");
         }
 
-        // 3️⃣ Create Booking entity
         Booking booking = new Booking();
         booking.setCustomer(customerOptional.get());
         booking.setFlight(flightOptional.get());
         booking.setSeatsBooked(bookingDTO.getSeatsBooked());
 
-        // 4️⃣ Save booking
         Booking savedBooking = bookingRepository.save(booking);
 
-        // 5️⃣ Convert Entity → DTO
-        return new BookingDTO(
-                savedBooking.getBookingId(),
-                savedBooking.getCustomer().getCustomerId(),
-                savedBooking.getFlight().getId(),
-                savedBooking.getSeatsBooked(),
-                savedBooking.getBookingTime()
-        );
+        // 🔥 USE MAPSTRUCT HERE
+        return bookingMapper.toDTO(savedBooking);
     }
-
     // 🔥 NEW METHOD ADDED HERE
+
     public List<BookingDTO> getAllBookings() {
 
         return bookingRepository.findAll()
                 .stream()
-                .map(booking -> new BookingDTO(
-                        booking.getBookingId(),
-                        booking.getCustomer().getCustomerId(),
-                        booking.getFlight().getId(),
-                        booking.getSeatsBooked(),
-                        booking.getBookingTime()
-                ))
+                .map(bookingMapper::toDTO)
                 .toList();
     }
-}
+   // public List<BookingDTO> getAllBookings() {
+
+       // return bookingMapper.toDTO(savedBooking);
+        //return bookingRepository.findAll()
+                //.stream()
+              //  .map(booking -> new BookingDTO(
+                  //      booking.getBookingId(),
+                    //    booking.getCustomer().getCustomerId(),
+                      //  booking.getFlight().getId(),
+                        //booking.getSeatsBooked(),
+                        //booking.getBookingTime()
+                //))
+               // .toList();
+    }
