@@ -11,13 +11,13 @@ public class Customer {
     @Column(name = "customer_id")
     private Long customerId;
 
+
     @Column(nullable = false)
     private String name;
 
     @Column(unique = true)
     private String email;
 
-    // Constructors
     public Customer() {
     }
 
@@ -25,8 +25,6 @@ public class Customer {
         this.name = name;
         this.email = email;
     }
-
-    // Getters & Setters
 
     public Long getCustomerId() {
         return customerId;

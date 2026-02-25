@@ -43,7 +43,7 @@ class BookingServiceTest {
     void shouldCreateBookingSuccessfully() {
 
         // Arrange
-        BookingDTO inputDTO = new BookingDTO(null, 1L, 1L, 2, null);
+        BookingDTO inputDTO = new BookingDTO(null, 1L, 1L);
 
         Customer customer = new Customer();
         customer.setCustomerId(1L);
@@ -62,7 +62,7 @@ class BookingServiceTest {
         savedBooking.setFlight(flight);
         savedBooking.setSeatsBooked(2);
 
-        BookingDTO outputDTO = new BookingDTO(100L, 1L, 1L, 2, null);
+        BookingDTO outputDTO = new BookingDTO(100L, 1L, 1L);
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(flightRepository.findById(1L)).thenReturn(Optional.of(flight));
@@ -84,7 +84,7 @@ class BookingServiceTest {
         Booking booking = new Booking();
         booking.setBookingId(1L);
 
-        BookingDTO dto = new BookingDTO(1L, 1L, 1L, 2, null);
+        BookingDTO dto = new BookingDTO(1L, 1L, 1L);
 
         when(bookingRepository.findAll()).thenReturn(List.of(booking));
         when(bookingMapper.toDTO(booking)).thenReturn(dto);

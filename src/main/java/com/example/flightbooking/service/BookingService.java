@@ -55,10 +55,10 @@ public class BookingService {
 
         Booking savedBooking = bookingRepository.save(booking);
 
-        // 🔥 USE MAPSTRUCT HERE
+        //  USE MAPSTRUCT HERE
         return bookingMapper.toDTO(savedBooking);
     }
-    // 🔥 NEW METHOD ADDED HERE
+    //  NEW METHOD ADDED HERE
 
     public List<BookingDTO> getAllBookings() {
 
@@ -66,6 +66,13 @@ public class BookingService {
                 .stream()
                 .map(bookingMapper::toDTO)
                 .toList();
+    }
+    public BookingDTO getBookingById(Long id) {
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        return bookingMapper.toDTO(booking);
     }
    // public List<BookingDTO> getAllBookings() {
 

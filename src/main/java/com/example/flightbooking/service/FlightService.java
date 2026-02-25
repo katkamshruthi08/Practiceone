@@ -20,7 +20,7 @@ public class FlightService {
         this.flightMapper = flightMapper;
     }
 
-    // 🔥 Create Flight
+    //  Create Flight
     public FlightDTO createFlight(FlightDTO flightDTO) {
 
         Flight flight = flightMapper.toEntity(flightDTO);
@@ -29,8 +29,15 @@ public class FlightService {
 
         return flightMapper.toDTO(savedFlight);
     }
+    //  Get Flight By Id
+    public FlightDTO getFlightById(Long id) {
 
-    // 🔥 Get All Flights
+        Flight flight = flightRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Flight not found"));
+
+        return flightMapper.toDTO(flight);
+    }
+    //  Get All Flights
     public List<FlightDTO> getAllFlights() {
 
         return flightRepository.findAll()

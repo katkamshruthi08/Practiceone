@@ -10,5 +10,7 @@ public interface BookingMapper {
 
     @Mapping(source = "customer.customerId", target = "customerId")
     @Mapping(source = "flight.id", target = "flightId")
+    @Mapping(source = "bookingId", target = "bookingId")
+
     BookingDTO toDTO(Booking booking);
 }
