@@ -1,11 +1,16 @@
 package com.example.flightbooking.dto;
+import lombok.Data;
 
+@Data
 public class FlightDTO {
 
     private Long id;
     private String airline;
+    //private String airline;
     private int totalSeats;
-
+    private String source;
+    private String destination;
+    private double price;
     public FlightDTO() {
     }
 
@@ -25,6 +30,10 @@ public class FlightDTO {
 
     public int getTotalSeats() {
         return totalSeats;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setAirline(String airline) {

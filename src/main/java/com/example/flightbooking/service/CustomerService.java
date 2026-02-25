@@ -7,35 +7,18 @@ import com.example.flightbooking.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+//package com.example.flightbooking.service;
 
-@Service
-public class CustomerService {
+import com.example.flightbooking.dto.CustomerDTO;
+import java.util.List;
 
-    private final CustomerRepository customerRepository;
-    private final CustomerMapper customerMapper;
+public interface CustomerService {
 
-    public CustomerService(CustomerRepository customerRepository,
-                           CustomerMapper customerMapper) {
-        this.customerRepository = customerRepository;
-        this.customerMapper = customerMapper;
-    }
+    CustomerDTO createCustomer(CustomerDTO customerDTO);
 
-    // 🔥 Create Customer using MapStruct
-    public CustomerDTO registerCustomer(CustomerDTO customerDTO) {
+    List<CustomerDTO> getAllCustomers();
 
-        Customer customer = customerMapper.toEntity(customerDTO);
+    CustomerDTO getCustomerById(Long id);
 
-        Customer savedCustomer = customerRepository.save(customer);
-
-        return customerMapper.toDTO(savedCustomer);
-    }
-
-    // 🔥 Get All Customers
-    public List<CustomerDTO> getAllCustomers() {
-
-        return customerRepository.findAll()
-                .stream()
-                .map(customerMapper::toDTO)
-                .toList();
-    }
+    CustomerDTO registerCustomer(CustomerDTO customerDTO);
 }

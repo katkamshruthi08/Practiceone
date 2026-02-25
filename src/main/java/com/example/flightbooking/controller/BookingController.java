@@ -3,6 +3,7 @@ package com.example.flightbooking.controller;
 import com.example.flightbooking.dto.BookingDTO;
 import com.example.flightbooking.service.BookingService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -10,20 +11,16 @@ import java.util.List;
 @RequestMapping("/bookings")
 public class BookingController {
 
-    private final BookingService bookingService;
-
-    public BookingController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
+    @Autowired
+    private BookingService bookingService;
 
     @PostMapping
     public BookingDTO createBooking(@RequestBody BookingDTO bookingDTO) {
         return bookingService.createBooking(bookingDTO);
     }
 
-    // ✅ MUST BE INSIDE THE CLASS
-    @GetMapping
-    public List<BookingDTO> getAllBookings() {
-        return bookingService.getAllBookings();
+    @GetMapping("/{id}")
+    public BookingDTO getBooking(@PathVariable Long id) {
+        return bookingService.getBookingById(id);
     }
 }
