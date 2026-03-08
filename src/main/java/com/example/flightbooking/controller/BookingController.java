@@ -12,6 +12,7 @@ import java.util.List;
 public class BookingController {
 
     @Autowired
+
     private BookingService bookingService;
 
     @PostMapping
@@ -24,3 +25,7 @@ public class BookingController {
         return bookingService.getBookingById(id);
     }
 }
+
+
+
+

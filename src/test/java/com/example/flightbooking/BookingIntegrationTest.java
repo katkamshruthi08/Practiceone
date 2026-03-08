@@ -13,9 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 //import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.security.test.context.support.WithMockUser;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
+
 class BookingIntegrationTest {
 
     @Autowired
@@ -26,7 +28,7 @@ class BookingIntegrationTest {
 
     @Autowired
     private FlightService flightService;
-
+    @WithMockUser
     @Test
     void shouldCreateAndFetchBooking() {
 

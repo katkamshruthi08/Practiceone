@@ -3,12 +3,14 @@ package com.example.flightbooking.service;
 import com.example.flightbooking.dto.BookingDTO;
 import com.example.flightbooking.entity.Booking;
 import com.example.flightbooking.entity.Customer;
+import com.example.flightbooking.kafka.BookingProducer;
 import com.example.flightbooking.mapper.BookingMapper;
 import com.example.flightbooking.entity.Flight;
 import com.example.flightbooking.repository.BookingRepository;
 import com.example.flightbooking.repository.CustomerRepository;
 import com.example.flightbooking.repository.FlightRepository;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -20,15 +22,19 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final CustomerRepository customerRepository;
     private final FlightRepository flightRepository;
+    private final BookingProducer bookingProducer;
+
 
     public BookingService(BookingRepository bookingRepository,
                           CustomerRepository customerRepository,
                           FlightRepository flightRepository,
-                          BookingMapper bookingMapper) {
+                          BookingMapper bookingMapper,
+                          BookingProducer bookingProducer) {
         this.bookingRepository = bookingRepository;
         this.customerRepository = customerRepository;
         this.flightRepository = flightRepository;
         this.bookingMapper = bookingMapper;
+        this.bookingProducer = bookingProducer;
 
     }
 
@@ -54,10 +60,12 @@ public class BookingService {
         booking.setSeatsBooked(bookingDTO.getSeatsBooked());
 
         Booking savedBooking = bookingRepository.save(booking);
+        bookingProducer.sendBookingEvent("booking created with id" +savedBooking.getBookingId());
 
         //  USE MAPSTRUCT HERE
         return bookingMapper.toDTO(savedBooking);
     }
+
     //  NEW METHOD ADDED HERE
 
     public List<BookingDTO> getAllBookings() {

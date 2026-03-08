@@ -3,6 +3,8 @@ package com.example.flightbooking.controller;
 import com.example.flightbooking.dto.BookingDTO;
 import com.example.flightbooking.dto.CustomerDTO;
 import com.example.flightbooking.dto.FlightDTO;
+import com.example.flightbooking.kafka.BookingProducer;
+import com.example.flightbooking.service.BookingService;
 import com.example.flightbooking.service.CustomerService;
 import com.example.flightbooking.service.FlightService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,19 +13,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf; // 🔥 IMPORTANT
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
+@WithMockUser
 class BookingControllerIntegrationTest {
 
     @Autowired
@@ -37,6 +43,9 @@ class BookingControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private BookingProducer bookingProducer;
 
     @Test
     void shouldCreateAndFetchBooking() throws Exception {
@@ -62,14 +71,15 @@ class BookingControllerIntegrationTest {
         assertNotNull(savedFlight);
         assertNotNull(savedFlight.getId());
 
-        // 3️⃣ Create Booking JSON (DO NOT use BookingDTO(1L,1L,1L))
+        // 3️⃣ Create Booking JSON
         BookingDTO bookingDTO = new BookingDTO();
         bookingDTO.setCustomerId(savedCustomer.getCustomerId());
         bookingDTO.setFlightId(savedFlight.getId());
         bookingDTO.setSeatsBooked(2);
 
-        // 4️⃣ POST /bookings
+        // 4️⃣ POST /bookings  🔥 CSRF FIX ADDED
         String bookingResponse = mockMvc.perform(post("/bookings")
+                        .with(csrf())   // 🔥 THIS FIXES 403
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookingDTO)))
                 .andExpect(status().isOk())
