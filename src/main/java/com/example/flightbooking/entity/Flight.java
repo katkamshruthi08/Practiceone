@@ -62,7 +62,13 @@ public class Flight {
     }
 
     public void setId(Long id) {
-        this.id=id;
+        this.id = id;
 
+    }
+
+    public Long getFlightId() {
+
+
+        return 0L;
     }
 }

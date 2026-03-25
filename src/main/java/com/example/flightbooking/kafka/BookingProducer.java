@@ -5,15 +5,19 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class  BookingProducer {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+public class BookingProducer {
 
-    public BookingProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    private final KafkaTemplate<Object, String> kafkaTemplate;
+
+    public BookingProducer(KafkaTemplate<Object, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendBookingEvent(String message) {
-        kafkaTemplate.send("booking-topic", message);
+    public void sendBookingEvent(String event) {
+
+        System.out.println("Publishing booking event to Kafka: " + event);
+
+        kafkaTemplate.send("booking-topic", event);
     }
 }

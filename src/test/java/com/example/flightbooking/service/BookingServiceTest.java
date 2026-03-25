@@ -8,8 +8,8 @@ import com.example.flightbooking.mapper.BookingMapper;
 import com.example.flightbooking.repository.BookingRepository;
 import com.example.flightbooking.repository.CustomerRepository;
 import com.example.flightbooking.repository.FlightRepository;
+import com.example.flightbooking.kafka.BookingProducer;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
 
@@ -37,8 +38,13 @@ class BookingServiceTest {
     @Mock
     private BookingMapper bookingMapper;
 
+    @Mock
+    private BookingProducer bookingProducer;   // Kafka dependency
+
     @InjectMocks
     private BookingService bookingService;
+
+
     @Test
     void shouldCreateBookingSuccessfully() {
 
@@ -69,6 +75,9 @@ class BookingServiceTest {
         when(bookingRepository.save(any(Booking.class))).thenReturn(savedBooking);
         when(bookingMapper.toDTO(savedBooking)).thenReturn(outputDTO);
 
+        // Kafka mock
+        doNothing().when(bookingProducer).sendBookingEvent(any());
+
         // Act
         BookingDTO result = bookingService.createBooking(inputDTO);
 
@@ -77,7 +86,10 @@ class BookingServiceTest {
         assertEquals(100L, result.getBookingId());
 
         verify(bookingRepository, times(1)).save(any(Booking.class));
+        verify(bookingProducer, times(1)).sendBookingEvent(any());
     }
+
+
     @Test
     void shouldReturnAllBookings() {
 

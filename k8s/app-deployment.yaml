@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flightbooking-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flightbooking
+  template:
+    metadata:
+      labels:
+        app: flightbooking
+    spec:
+      containers:
+        - name: flightbooking-container
+          image: flightbooking-app
+          imagePullPolicy: Never   # VERY IMPORTANT (local Docker image)
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/flightdb
+
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: root
+

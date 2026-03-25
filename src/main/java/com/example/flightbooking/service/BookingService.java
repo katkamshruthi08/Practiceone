@@ -3,6 +3,7 @@ package com.example.flightbooking.service;
 import com.example.flightbooking.dto.BookingDTO;
 import com.example.flightbooking.entity.Booking;
 import com.example.flightbooking.entity.Customer;
+import com.example.flightbooking.event.BookingEvent;
 import com.example.flightbooking.kafka.BookingProducer;
 import com.example.flightbooking.mapper.BookingMapper;
 import com.example.flightbooking.entity.Flight;
@@ -60,8 +61,15 @@ public class BookingService {
         booking.setSeatsBooked(bookingDTO.getSeatsBooked());
 
         Booking savedBooking = bookingRepository.save(booking);
-        bookingProducer.sendBookingEvent("booking created with id" +savedBooking.getBookingId());
+       // bookingProducer.sendBookingEvent("booking created with id" +savedBooking.getBookingId());
+        BookingEvent event = new BookingEvent();
+        event.setBookingId(savedBooking.getBookingId());
+        event.setFlightId(savedBooking.getFlight().getFlightId());
+        event.setCustomerId(savedBooking.getCustomer().getCustomerId());
+        event.setSeatsBooked(savedBooking.getSeatsBooked());
+        event.setStatus("BOOKING_CREATED");
 
+        bookingProducer.sendBookingEvent(String.valueOf(event));
         //  USE MAPSTRUCT HERE
         return bookingMapper.toDTO(savedBooking);
     }
